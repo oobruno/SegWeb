@@ -24,26 +24,25 @@ public class cadAutenticacaoServlet extends HttpServlet {
 
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		// Pegando os dados do formulário HTML pelo request
 		try {
-			int idUsuario = Integer.parseInt("idUsuario");
 			String nomeUsuario = request.getParameter("nomeUsuario");
 			String idEmail = request.getParameter("idEmail");
 			String idSenha = request.getParameter("idSenha");
-			int idNumero = Integer.parseInt("idNumero");
+			String idNumero = request.getParameter("idNumero");
 
 			// Gerando o JSON para enviar ao webservice
 			JSONObject json = new JSONObject();
-			json.put("idUsuario", idUsuario);
 			json.put("nomeUsuario", nomeUsuario);
 			json.put("idEmail", idEmail);
 			json.put("idSenha", idSenha);
 			json.put("idNumero", idNumero);
+			System.out.println("Json = " + json.toString());
 			// Definindo o endpoint (URL) do web service
-			URL url = new URL("http://localhost/cadusuario.php");
+			URL url = new URL("http://localhost/Seg/cadAutenticacao.php");
 			// Criando o objeto para conexão HTTP
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			// Configurando a conexão
@@ -51,9 +50,10 @@ public class cadAutenticacaoServlet extends HttpServlet {
 			conn.setRequestProperty("Content-Type", "application/json; utf-8");
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setDoOutput(true);
-			try {
+			
 				// Enviando o json gerado pelo request
 				OutputStream os = conn.getOutputStream();
+				
 				byte[] input = json.toString().getBytes("utf-8");
 				os.write(input, 0, input.length);
 				// recebendo a resposta (response) do web service
@@ -67,10 +67,9 @@ public class cadAutenticacaoServlet extends HttpServlet {
 				}
 				// Enviando response para o cliente http
 				response.setContentType("application/json");
+				System.out.println("Resposta = " + responseContent.toString());
 				response.getWriter().write(responseContent.toString());
-			} catch (Error e) {
-				System.out.println(e.getMessage());
-			}
+			
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 		}
